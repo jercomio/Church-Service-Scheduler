@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Mobile app (not needed for backend)
+apps/mobile/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Tests
+tests/
+**/*.test.ts
+**/*.spec.ts
+
+# Documentation
+*.md
+LICENSE
+
+# Misc
+*.log
+npm-debug.*
+tsconfig.test.json
+vitest.config.ts
+PRD/
