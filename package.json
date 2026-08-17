@@ -1,0 +1,29 @@
+{
+  "name": "church-service-scheduler",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Church Service Scheduler - plan video team service shifts across iOS and Android",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "postinstall": "patch-package",
+    "prepare": "npm run build -w @css/shared",
+    "build": "npm run build --workspaces --if-present",
+    "dev:backend": "npm run dev -w @css/backend",
+    "dev:mobile": "npm run start -w @css/mobile",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "db:migrate": "npm run db:migrate -w @css/backend",
+    "db:seed": "npm run db:seed -w @css/backend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "patch-package": "^8.0.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

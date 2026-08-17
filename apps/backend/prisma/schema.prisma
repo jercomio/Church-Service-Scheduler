@@ -1,0 +1,150 @@
+// Prisma schema — Church Service Scheduler
+// All tables are owned by the backend (PostgreSQL on Supabase).
+// Users are mirrored from Supabase Auth (see AUTH flows); the local
+// User table keeps role + feature flags, and links to a Member via userId.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  role          Role           @default(MEMBER) // COORDINATOR | MEMBER
+  passwordHash  String? // used ONLY by the local dev auth provider
+  member        Member?
+  features      FeatureUser[]
+  notifications Notification[]
+  createdAt     DateTime       @default(now())
+
+  @@map("User")
+}
+
+model Team {
+  id      String   @id @default(cuid())
+  name    String
+  members Member[]
+  slots   Slot[]
+  createdAt DateTime @default(now())
+
+  @@map("Team")
+}
+
+model Member {
+  id        String   @id @default(cuid())
+  teamId    String
+  userId    String?  @unique // null si invité non inscrit
+  firstName String
+  lastName  String
+  email     String?
+  phone     String?
+  address   String?
+  avatarUrl String? // URL ou data URI de la photo de profil
+  isActive  Boolean  @default(true)
+  role      Role     @default(MEMBER) // rôle effectif pour les membres sans compte lié
+  shifts    Shift[]
+  createdAt DateTime @default(now())
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([teamId])
+  @@map("Member")
+}
+
+model Slot {
+  id        String    @id @default(cuid())
+  teamId    String
+  dayOfWeek Int       // 0 = Sunday ... 6 = Saturday
+  startTime String    // "HH:mm"
+  endTime   String
+  label     String    // ex. "Sunday Morning Worship"
+  isActive  Boolean   @default(true)
+  shifts    Shift[]
+  createdAt DateTime  @default(now())
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([teamId, dayOfWeek])
+  @@map("Slot")
+}
+
+model Shift {
+  id        String   @id @default(cuid())
+  slotId    String
+  memberId  String
+  date      DateTime // date du service
+  createdAt DateTime @default(now())
+
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  slot   Slot   @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  reminders ShiftReminder[]
+
+  @@unique([slotId, memberId, date])
+  @@index([memberId, date])
+  @@index([slotId, date])
+  @@map("Shift")
+}
+
+model Feature {
+  id          String        @id @default(cuid())
+  key         String        @unique // ex. "auto-rotation", "month-view"
+  name        String
+  description String?
+  enabled     Boolean       @default(true)
+  tier        String? // réservé au futur pricing
+  users       FeatureUser[]
+
+  @@map("Feature")
+}
+
+model FeatureUser {
+  featureId String
+  userId    String
+  enabled   Boolean @default(true)
+
+  feature Feature @relation(fields: [featureId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([featureId, userId])
+  @@map("FeatureUser")
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("Notification")
+}
+
+// Operational table: deduplicates J-7 / J-1 email reminders per shift.
+model ShiftReminder {
+  id         String   @id @default(cuid())
+  shiftId    String
+  daysBefore Int // 7 or 1
+  sentAt     DateTime @default(now())
+
+  shift Shift @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+
+  @@unique([shiftId, daysBefore])
+  @@map("ShiftReminder")
+}
+
+enum Role {
+  ADMIN
+  COORDINATOR
+  MEMBER
+}

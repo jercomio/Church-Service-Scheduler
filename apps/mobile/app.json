@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Church Service Scheduler",
+    "slug": "church-service-scheduler",
+    "version": "1.0.0",
+    "orientation": "default",
+    "userInterfaceStyle": "automatic",
+    "scheme": "churchservice",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.churchservice.scheduler"
+    },
+    "android": {
+      "package": "com.churchservice.scheduler",
+      "adaptiveIcon": {
+        "backgroundColor": "#7c3aed"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to set a profile picture.",
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to take a profile picture.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#7c3aed",
+          "resizeMode": "contain"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}

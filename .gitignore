@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+
+# Builds
+dist/
+build/
+apps/mobile/dist/
+apps/mobile/web-build/
+
+# Expo
+apps/mobile/.expo/
+apps/mobile/.expo-shared/
+apps/mobile/expo-env.d.ts
+
+# Native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+apps/mobile/ios/
+apps/mobile/android/
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Prisma
+apps/backend/prisma/*.db
+apps/backend/prisma/dev.db
+apps/backend/prisma/dev.db-journal
+
+# Logs
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# OS
+.DS_Store
+
+# Misc
+*.tsbuildinfo
+next-env.d.ts

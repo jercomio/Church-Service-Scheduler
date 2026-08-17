@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist-tests",
+    "types": ["node", "vitest/globals"]
+  },
+  "include": ["src", "tests", "prisma"]
+}

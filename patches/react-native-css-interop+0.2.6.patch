@@ -1,0 +1,23 @@
+diff --git a/node_modules/react-native-css-interop/dist/runtime/native/render-component.js b/node_modules/react-native-css-interop/dist/runtime/native/render-component.js
+index eba25ec..b79ce52 100644
+--- a/node_modules/react-native-css-interop/dist/runtime/native/render-component.js
++++ b/node_modules/react-native-css-interop/dist/runtime/native/render-component.js
+@@ -131,10 +131,16 @@ function stringify(object) {
+         }
+         seen.add(value);
+         const newValue = Array.isArray(value) ? [] : {};
+-        for (const entry of Object.entries(value)) {
++        let entries;
++        try {
++            entries = Object.entries(value);
++        }
++        catch {
++            return "[Unserializable]";
++        }
++        for (const entry of entries) {
+             newValue[entry[0]] = replace(entry[0], entry[1]);
+         }
+-        seen.delete(value);
+         return newValue;
+     }, 2);
+ }
